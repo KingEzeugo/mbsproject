@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Days</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 id="date"></h2>
+    <p id="description"></p>
+    <img id="image" src="" alt="National Day Image">
+</div>
+
+<script>
+    async function fetchNationalDays() {
+        // Placeholder URL - replace with actual API endpoint or data source
+        const url = 'https://example.com/api/nationaldays';
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            displayNationalDays(data);
+        } catch (error) {
+            console.error('Error fetching national days:', error);
+        }
+    }
+
+    let currentHolidayIndex = 0;
+    let holidays = [];
+
+    function displayNationalDays(days) {
+        // Filter the data for today's date
+        const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+        holidays = days.filter(day => day.date === today);
+
+        if (holidays.length > 0) {
+            showHoliday(currentHolidayIndex);
+            setInterval(() => {
+                currentHolidayIndex = (currentHolidayIndex + 1) % holidays.length;
+                showHoliday(currentHolidayIndex);
+            }, 5000); // Change slide every 5 seconds
+        } else {
+            document.getElementById('date').textContent = today;
+            document.getElementById('description').textContent = 'No national days found for today.';
+            document.getElementById('image').src = '';
+        }
+    }
+
+    function showHoliday(index) {
+        const holiday = holidays[index];
+        document.getElementById('date').textContent = holiday.date;
+        document.getElementById('description').textContent = holiday.description;
+        document.getElementById('image').src = holiday.image;
+    }
+
+    // Example data - replace with actual data fetching
+    const exampleData = [
+        { date: 'June 4', description: 'National Cheese Day', image: 'https://www.nationaldaycalendar.com/.image/ar_16:9%2Cc_fill%2Ccs_srgb%2Cg_faces:center%2Cq_auto:eco%2Cw_768/MjA2NzgzNjI3OTI3NzU4Mzc4/website-feature---national-hug-your-cat-day--june-4.png' },
+        { date: 'June 4', description: 'National Hug Your Cat Day', image: 'https://image.pitchbook.com/oDUc3YQWnNpmt2gTZqjwM0VgjZ41689775797451_200x200' },
+        { date: 'June 4', description: 'National HUNCHO Day', image: 'https://image.pitchbook.com/oDUc3YQWnNpmt2gTZqjwM0VgjZ41689775797451_200x200' },
+        // Add more example data here
+    ];
+
+    // Display the example data initially
+    displayNationalDays(exampleData);
+
+    // Fetch and update data daily
+    fetchNationalDays();
+    setInterval(fetchNationalDays, 24 * 60 * 60 * 1000); // Update every 24 hours
+</script>
+
+</body>
+</html>
